@@ -4,674 +4,73 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>GIFcode | by Mario Garcia</title>
-  <script src="https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/dist/gifuct-js.min.js"></script>
   <style>
-    :root {
-      --bg: #020506;
-      --bg-soft: #061113;
-      --panel: rgba(2, 17, 20, 0.76);
-      --panel-strong: rgba(2, 20, 24, 0.95);
-      --teal: #20f6df;
-      --teal-soft: #7ffff4;
-      --teal-dim: rgba(32, 246, 223, 0.16);
-      --teal-faint: rgba(32, 246, 223, 0.08);
-      --white: #effffd;
-      --muted: rgba(239, 255, 253, 0.68);
-      --muted-2: rgba(239, 255, 253, 0.48);
-      --line: rgba(127, 255, 244, 0.23);
-      --danger: #ff6b8a;
-      --ok: #78ffd7;
-      --warn: #ffd36c;
-      --shadow: 0 0 30px rgba(32, 246, 223, 0.20), 0 0 84px rgba(32, 246, 223, 0.09);
-      --radius: 24px;
-      --radius-sm: 16px;
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--white);
-      font-family: var(--font);
-      overflow-x: hidden;
-    }
-
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -2;
-    }
-
-    body::before {
-      background:
-        radial-gradient(circle at 18% 12%, rgba(32, 246, 223, 0.20), transparent 28%),
-        radial-gradient(circle at 84% 72%, rgba(32, 246, 223, 0.13), transparent 32%),
-        radial-gradient(circle at 48% 46%, rgba(32, 246, 223, 0.065), transparent 42%),
-        linear-gradient(180deg, #010303 0%, #020809 50%, #020303 100%);
-    }
-
-    body::after {
-      opacity: 0.32;
-      background-image:
-        linear-gradient(rgba(127, 255, 244, 0.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(127, 255, 244, 0.10) 1px, transparent 1px);
-      background-size: 52px 52px;
-      mask-image: radial-gradient(circle at 50% 45%, black 10%, transparent 80%);
-      animation: gridDrift 18s linear infinite;
-    }
-
-    @keyframes gridDrift {
-      from { transform: translate3d(0, 0, 0); }
-      to { transform: translate3d(52px, 52px, 0); }
-    }
-
-    button, input, select, textarea { font: inherit; }
-
-    .view {
-      min-height: 100vh;
-      width: 100%;
-      display: none;
-      place-items: center;
-      padding: max(22px, env(safe-area-inset-top)) 18px max(26px, env(safe-area-inset-bottom));
-    }
-
-    .view.active { display: grid; }
-
-    .hero {
-      width: min(900px, 100%);
-      min-height: min(760px, calc(100vh - 52px));
-      display: grid;
-      place-items: center;
-      text-align: center;
-      position: relative;
-      border: 1px solid var(--line);
-      border-radius: 36px;
-      padding: 48px 22px;
-      background:
-        linear-gradient(180deg, rgba(2, 25, 29, 0.72), rgba(1, 6, 7, 0.92)),
-        radial-gradient(circle at 50% 22%, rgba(32, 246, 223, 0.20), transparent 34%);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      width: 480px;
-      height: 480px;
-      border: 1px solid rgba(127, 255, 244, 0.18);
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -52%);
-      box-shadow: inset 0 0 48px rgba(32, 246, 223, 0.10), 0 0 48px rgba(32, 246, 223, 0.09);
-      animation: pulseHalo 4.8s ease-in-out infinite;
-    }
-
-    .hero::after {
-      content: "{ gif → json }";
-      position: absolute;
-      left: 50%;
-      bottom: 32px;
-      transform: translateX(-50%);
-      color: rgba(127, 255, 244, 0.32);
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      font-size: 0.72rem;
-      white-space: nowrap;
-    }
-
-    @keyframes pulseHalo {
-      0%, 100% { opacity: 0.45; transform: translate(-50%, -52%) scale(0.98); }
-      50% { opacity: 0.85; transform: translate(-50%, -52%) scale(1.04); }
-    }
-
-    .hero-content { position: relative; z-index: 1; width: min(680px, 100%); }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-      padding: 9px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(2, 17, 20, 0.58);
-      color: var(--teal-soft);
-      box-shadow: 0 0 24px rgba(32, 246, 223, 0.11);
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
-      font-size: 0.73rem;
-      font-weight: 760;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 0 18px var(--teal);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(3.1rem, 12vw, 8rem);
-      line-height: 0.9;
-      letter-spacing: -0.08em;
-      color: #f7fffe;
-      text-shadow:
-        0 0 12px rgba(127, 255, 244, 0.65),
-        0 0 48px rgba(32, 246, 223, 0.30),
-        0 0 100px rgba(32, 246, 223, 0.18);
-    }
-
-    .subtitle {
-      margin: 16px auto 0;
-      color: var(--muted);
-      max-width: 550px;
-      font-size: clamp(1rem, 2vw, 1.2rem);
-      line-height: 1.65;
-    }
-
-    .credit {
-      margin-top: 16px;
-      color: rgba(127, 255, 244, 0.82);
-      font-weight: 780;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 0.78rem;
-    }
-
-    .launch {
-      margin-top: 34px;
-      min-width: 210px;
-      min-height: 58px;
-      border: 1px solid rgba(127, 255, 244, 0.55);
-      border-radius: 999px;
-      background:
-        linear-gradient(135deg, rgba(32, 246, 223, 0.98), rgba(127, 255, 244, 0.72)),
-        #20f6df;
-      color: #001d1d;
-      font-size: 1.02rem;
-      font-weight: 900;
-      text-transform: lowercase;
-      letter-spacing: 0.09em;
-      cursor: pointer;
-      box-shadow: 0 0 30px rgba(32, 246, 223, 0.32), 0 14px 42px rgba(0, 0, 0, 0.45);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
-    }
-
-    .launch:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 0 44px rgba(32, 246, 223, 0.44), 0 18px 50px rgba(0, 0, 0, 0.5); }
-    .launch:active { transform: translateY(0) scale(0.99); }
-
-    .app-shell {
-      width: min(1180px, 100%);
-      min-height: calc(100vh - 52px);
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 18px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 15px 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(1, 10, 12, 0.78);
-      box-shadow: 0 0 32px rgba(32, 246, 223, 0.10);
-      backdrop-filter: blur(18px);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .brand-mark {
-      flex: 0 0 auto;
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      color: #001d1d;
-      font-weight: 950;
-      letter-spacing: -0.08em;
-      background: linear-gradient(135deg, var(--teal), var(--teal-soft));
-      box-shadow: 0 0 28px rgba(32, 246, 223, 0.28);
-    }
-
-    .brand h2 {
-      margin: 0;
-      font-size: 1.12rem;
-      letter-spacing: -0.04em;
-      line-height: 1;
-    }
-
-    .brand p {
-      margin: 5px 0 0;
-      color: var(--muted-2);
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .ghost-btn, .primary-btn, .small-btn {
-      border: 1px solid var(--line);
-      color: var(--white);
-      background: rgba(2, 20, 24, 0.66);
-      border-radius: 999px;
-      min-height: 42px;
-      padding: 0 15px;
-      cursor: pointer;
-      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-    }
-
-    .ghost-btn:hover, .small-btn:hover {
-      transform: translateY(-1px);
-      border-color: rgba(127, 255, 244, 0.58);
-      box-shadow: 0 0 24px rgba(32, 246, 223, 0.12);
-    }
-
-    .primary-btn {
-      border-color: rgba(127, 255, 244, 0.62);
-      background: linear-gradient(135deg, rgba(32, 246, 223, 0.96), rgba(127, 255, 244, 0.74));
-      color: #001d1d;
-      font-weight: 920;
-      box-shadow: 0 0 28px rgba(32, 246, 223, 0.18);
-    }
-
-    .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 0 38px rgba(32, 246, 223, 0.28); }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: minmax(300px, 0.92fr) minmax(320px, 1.08fr);
-      gap: 18px;
-      align-items: stretch;
-    }
-
-    .panel {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background:
-        linear-gradient(180deg, rgba(2, 22, 26, 0.78), rgba(1, 8, 10, 0.90));
-      box-shadow: 0 0 34px rgba(32, 246, 223, 0.10);
-      backdrop-filter: blur(18px);
-      overflow: hidden;
-      min-width: 0;
-    }
-
-    .panel-header {
-      padding: 18px 18px 0;
-    }
-
-    .panel-title {
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.98rem;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: var(--teal-soft);
-    }
-
-    .panel-title span {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 0 18px var(--teal);
-    }
-
-    .panel-subtitle {
-      margin: 9px 0 0;
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.91rem;
-    }
-
-    .panel-body { padding: 18px; }
-
-    .dropzone {
-      min-height: 245px;
-      border: 1px dashed rgba(127, 255, 244, 0.44);
-      border-radius: 22px;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 26px 16px;
-      background:
-        radial-gradient(circle at 50% 38%, rgba(32, 246, 223, 0.15), transparent 38%),
-        rgba(0, 0, 0, 0.22);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
-    }
-
-    .dropzone.dragging {
-      transform: scale(1.01);
-      border-color: var(--teal-soft);
-      background:
-        radial-gradient(circle at 50% 38%, rgba(32, 246, 223, 0.24), transparent 45%),
-        rgba(0, 0, 0, 0.24);
-    }
-
-    .dropzone input { display: none; }
-
-    .upload-icon {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 16px;
-      border-radius: 24px;
-      display: grid;
-      place-items: center;
-      color: var(--teal-soft);
-      border: 1px solid rgba(127, 255, 244, 0.30);
-      background: rgba(32, 246, 223, 0.08);
-      box-shadow: inset 0 0 28px rgba(32, 246, 223, 0.08), 0 0 28px rgba(32, 246, 223, 0.10);
-      font-size: 1.9rem;
-    }
-
-    .dropzone strong { display: block; font-size: 1.08rem; }
-    .dropzone small { display: block; margin-top: 8px; color: var(--muted-2); line-height: 1.45; }
-
-    .preview-card {
-      margin-top: 14px;
-      display: none;
-      border: 1px solid rgba(127, 255, 244, 0.18);
-      border-radius: 20px;
-      background: rgba(0, 0, 0, 0.22);
-      overflow: hidden;
-    }
-
-    .preview-card.active { display: block; }
-
-    .preview-wrap {
-      min-height: 190px;
-      display: grid;
-      place-items: center;
-      background:
-        linear-gradient(45deg, rgba(127,255,244,.06) 25%, transparent 25%, transparent 75%, rgba(127,255,244,.06) 75%),
-        linear-gradient(45deg, rgba(127,255,244,.06) 25%, transparent 25%, transparent 75%, rgba(127,255,244,.06) 75%);
-      background-position: 0 0, 14px 14px;
-      background-size: 28px 28px;
-      padding: 14px;
-    }
-
-    .preview-wrap img {
-      max-width: 100%;
-      max-height: 360px;
-      object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-    }
-
-    .file-info {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: rgba(127, 255, 244, 0.10);
-      border-top: 1px solid rgba(127, 255, 244, 0.18);
-    }
-
-    .info-chip {
-      padding: 12px;
-      background: rgba(2, 17, 20, 0.82);
-      min-width: 0;
-    }
-
-    .info-chip small {
-      display: block;
-      color: var(--muted-2);
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      font-size: 0.66rem;
-      margin-bottom: 4px;
-    }
-
-    .info-chip strong {
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: 0.86rem;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 14px;
-    }
-
-    .field {
-      display: grid;
-      gap: 8px;
-    }
-
-    .field label {
-      color: var(--muted);
-      font-size: 0.79rem;
-      text-transform: uppercase;
-      letter-spacing: 0.10em;
-      font-weight: 790;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      border: 1px solid rgba(127, 255, 244, 0.18);
-      border-radius: 16px;
-      background: rgba(0, 0, 0, 0.30);
-      color: var(--white);
-      min-height: 48px;
-      padding: 12px 13px;
-      outline: none;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: rgba(127, 255, 244, 0.62);
-      box-shadow: 0 0 0 4px rgba(32, 246, 223, 0.08);
-    }
-
-    .field textarea {
-      min-height: 270px;
-      resize: vertical;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 0.78rem;
-      line-height: 1.5;
-      white-space: pre;
-      overflow-wrap: normal;
-      overflow-x: auto;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .switch-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 13px;
-      border: 1px solid rgba(127, 255, 244, 0.14);
-      border-radius: 16px;
-      background: rgba(0, 0, 0, 0.20);
-    }
-
-    .switch-row span { color: var(--muted); font-size: 0.88rem; line-height: 1.35; }
-
-    .toggle {
-      position: relative;
-      width: 52px;
-      height: 30px;
-      flex: 0 0 auto;
-    }
-
-    .toggle input { display: none; }
-
-    .toggle i {
-      position: absolute;
-      inset: 0;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.16);
-      cursor: pointer;
-      transition: background 0.18s ease, border-color 0.18s ease;
-    }
-
-    .toggle i::before {
-      content: "";
-      position: absolute;
-      width: 22px;
-      height: 22px;
-      left: 3px;
-      top: 3px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.86);
-      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .toggle input:checked + i {
-      background: rgba(32, 246, 223, 0.25);
-      border-color: rgba(127, 255, 244, 0.45);
-    }
-
-    .toggle input:checked + i::before {
-      transform: translateX(22px);
-      background: var(--teal-soft);
-      box-shadow: 0 0 16px rgba(32, 246, 223, 0.55);
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .status {
-      min-height: 44px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 14px;
-      padding: 12px 13px;
-      border-radius: 16px;
-      border: 1px solid rgba(127, 255, 244, 0.14);
-      background: rgba(0, 0, 0, 0.20);
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.9rem;
-    }
-
-    .status .light {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 0 16px var(--teal);
-      flex: 0 0 auto;
-    }
-
-    .status.error { color: #ffd3dc; border-color: rgba(255, 107, 138, 0.32); }
-    .status.error .light { background: var(--danger); box-shadow: 0 0 16px var(--danger); }
-    .status.warn { color: #fff0c0; border-color: rgba(255, 211, 108, 0.32); }
-    .status.warn .light { background: var(--warn); box-shadow: 0 0 16px var(--warn); }
-    .status.ok { color: var(--ok); border-color: rgba(120, 255, 215, 0.28); }
-
-    .progress {
-      margin-top: 14px;
-      height: 9px;
-      border: 1px solid rgba(127, 255, 244, 0.16);
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(0, 0, 0, 0.28);
-    }
-
-    .bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--teal), var(--teal-soft));
-      box-shadow: 0 0 18px rgba(32, 246, 223, 0.56);
-      transition: width 0.18s ease;
-    }
-
-    .tips {
-      margin-top: 14px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .tip {
-      border: 1px solid rgba(127, 255, 244, 0.13);
-      border-radius: 16px;
-      padding: 13px;
-      color: var(--muted);
-      background: rgba(0, 0, 0, 0.18);
-      line-height: 1.48;
-      font-size: 0.88rem;
-    }
-
-    .tip strong { color: var(--white); }
-
-    .hidden { display: none !important; }
-
-    @media (max-width: 880px) {
-      .main-grid { grid-template-columns: 1fr; }
-      .app-shell { min-height: auto; }
-      .topbar { align-items: flex-start; }
-      .brand p { white-space: normal; }
-    }
-
-    @media (max-width: 560px) {
-      .view { padding-left: 12px; padding-right: 12px; }
-      .hero { border-radius: 28px; min-height: calc(100vh - 34px); }
-      .hero::before { width: 330px; height: 330px; }
-      .topbar { border-radius: 20px; }
-      .topbar .ghost-btn { min-height: 38px; padding: 0 12px; font-size: 0.86rem; }
-      .panel-body, .panel-header { padding-left: 14px; padding-right: 14px; }
-      .two-col { grid-template-columns: 1fr; }
-      .file-info { grid-template-columns: 1fr; }
-      .actions > button { flex: 1 1 150px; }
-    }
+    :root{
+      --bg:#010405;
+      --bg2:#041012;
+      --panel:rgba(3,18,21,.82);
+      --panel2:rgba(2,10,12,.92);
+      --teal:#19f5de;
+      --teal2:#8dfff5;
+      --teal3:rgba(25,245,222,.14);
+      --line:rgba(141,255,245,.25);
+      --text:#effffe;
+      --muted:rgba(239,255,254,.66);
+      --muted2:rgba(239,255,254,.45);
+      --danger:#ff6e91;
+      --warn:#ffd46d;
+      --ok:#74ffd5;
+      --radius:24px;
+      --shadow:0 0 32px rgba(25,245,222,.15),0 0 90px rgba(25,245,222,.07);
+      --font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
+    body:before,body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2}
+    body:before{background:radial-gradient(circle at 20% 10%,rgba(25,245,222,.19),transparent 29%),radial-gradient(circle at 82% 78%,rgba(25,245,222,.13),transparent 34%),radial-gradient(circle at 50% 40%,rgba(25,245,222,.06),transparent 42%),linear-gradient(180deg,#010304,#020809 52%,#010304)}
+    body:after{opacity:.26;background-image:linear-gradient(rgba(141,255,245,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(141,255,245,.12) 1px,transparent 1px);background-size:54px 54px;mask-image:radial-gradient(circle at 50% 44%,black 12%,transparent 78%);animation:grid 19s linear infinite}
+    @keyframes grid{from{transform:translate3d(0,0,0)}to{transform:translate3d(54px,54px,0)}}
+    button,input,select,textarea{font:inherit}
+    button{-webkit-tap-highlight-color:transparent}
+    .view{min-height:100vh;width:100%;display:none;place-items:center;padding:max(22px,env(safe-area-inset-top)) 16px max(26px,env(safe-area-inset-bottom))}
+    .view.active{display:grid}
+    .hero{width:min(920px,100%);min-height:min(760px,calc(100vh - 52px));display:grid;place-items:center;text-align:center;position:relative;border:1px solid var(--line);border-radius:36px;padding:48px 22px;background:linear-gradient(180deg,rgba(2,25,29,.75),rgba(1,6,7,.94)),radial-gradient(circle at 50% 25%,rgba(25,245,222,.21),transparent 36%);box-shadow:var(--shadow);overflow:hidden}
+    .hero:before{content:"";position:absolute;width:500px;height:500px;border:1px solid rgba(141,255,245,.18);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-52%);box-shadow:inset 0 0 54px rgba(25,245,222,.10),0 0 54px rgba(25,245,222,.10);animation:halo 4.8s ease-in-out infinite}
+    .hero:after{content:"{ gif → json }";position:absolute;left:50%;bottom:32px;transform:translateX(-50%);color:rgba(141,255,245,.34);letter-spacing:.25em;text-transform:uppercase;font-size:.72rem;white-space:nowrap}
+    @keyframes halo{0%,100%{opacity:.48;transform:translate(-50%,-52%) scale(.98)}50%{opacity:.86;transform:translate(-50%,-52%) scale(1.04)}}
+    .hero-content{position:relative;z-index:1;width:min(690px,100%)}
+    .eyebrow{display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(2,17,20,.58);color:var(--teal2);box-shadow:0 0 24px rgba(25,245,222,.11);letter-spacing:.10em;text-transform:uppercase;font-size:.73rem;font-weight:780}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 18px var(--teal)}
+    h1{margin:0;font-size:clamp(3.2rem,12vw,8rem);line-height:.9;letter-spacing:-.08em;color:#f7fffe;text-shadow:0 0 12px rgba(141,255,245,.64),0 0 48px rgba(25,245,222,.31),0 0 100px rgba(25,245,222,.18)}
+    .subtitle{margin:16px auto 0;color:var(--muted);max-width:560px;font-size:clamp(1rem,2vw,1.2rem);line-height:1.65}
+    .credit{margin-top:16px;color:rgba(141,255,245,.84);font-weight:820;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}
+    .launch{margin-top:34px;min-width:218px;min-height:58px;border:1px solid rgba(141,255,245,.55);border-radius:999px;background:linear-gradient(135deg,rgba(25,245,222,.98),rgba(141,255,245,.72));color:#001d1d;font-size:1.02rem;font-weight:950;text-transform:lowercase;letter-spacing:.09em;cursor:pointer;box-shadow:0 0 30px rgba(25,245,222,.32),0 14px 42px rgba(0,0,0,.45);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+    .launch:hover{transform:translateY(-2px);filter:brightness(1.05);box-shadow:0 0 44px rgba(25,245,222,.44),0 18px 50px rgba(0,0,0,.50)}
+    .launch:active{transform:scale(.99)}
+    .app-shell{width:min(1180px,100%);min-height:calc(100vh - 52px);display:grid;grid-template-rows:auto 1fr;gap:18px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px 16px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(1,10,12,.78);box-shadow:0 0 32px rgba(25,245,222,.10);backdrop-filter:blur(18px)}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}.brand-mark{flex:0 0 auto;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:#001d1d;font-weight:950;letter-spacing:-.08em;background:linear-gradient(135deg,var(--teal),var(--teal2));box-shadow:0 0 28px rgba(25,245,222,.28)}
+    .brand h2{margin:0;font-size:1.12rem;letter-spacing:-.04em;line-height:1}.brand p{margin:5px 0 0;color:var(--muted2);font-size:.78rem;text-transform:uppercase;letter-spacing:.11em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ghost-btn,.primary-btn,.small-btn{border:1px solid var(--line);color:var(--text);background:rgba(2,20,24,.66);border-radius:999px;min-height:42px;padding:0 15px;cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,opacity .18s ease}
+    .ghost-btn:hover,.small-btn:hover{transform:translateY(-1px);border-color:rgba(141,255,245,.58);box-shadow:0 0 24px rgba(25,245,222,.12)}
+    .primary-btn{border-color:rgba(141,255,245,.62);background:linear-gradient(135deg,rgba(25,245,222,.96),rgba(141,255,245,.74));color:#001d1d;font-weight:930;box-shadow:0 0 28px rgba(25,245,222,.18)}
+    .primary-btn:hover{transform:translateY(-1px);box-shadow:0 0 38px rgba(25,245,222,.28)}button:disabled{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+    .main-grid{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(320px,1.1fr);gap:18px;align-items:start}.panel{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,rgba(2,22,26,.80),rgba(1,8,10,.92));box-shadow:0 0 34px rgba(25,245,222,.10);backdrop-filter:blur(18px);overflow:hidden;min-width:0}.panel-header{padding:18px 18px 0}.panel-title{margin:0;display:flex;align-items:center;gap:10px;font-size:.98rem;letter-spacing:.03em;text-transform:uppercase;color:var(--teal2)}.panel-title span{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 18px var(--teal)}.panel-subtitle{margin:9px 0 0;color:var(--muted);line-height:1.55;font-size:.91rem}.panel-body{padding:18px}
+    .dropzone{min-height:245px;border:1px dashed rgba(141,255,245,.44);border-radius:22px;display:grid;place-items:center;text-align:center;padding:26px 16px;background:radial-gradient(circle at 50% 38%,rgba(25,245,222,.15),transparent 38%),rgba(0,0,0,.22);cursor:pointer;position:relative;overflow:hidden;transition:border-color .18s ease,transform .18s ease,background .18s ease}.dropzone.dragging{transform:scale(1.01);border-color:var(--teal2);background:radial-gradient(circle at 50% 38%,rgba(25,245,222,.24),transparent 45%),rgba(0,0,0,.24)}.dropzone input{display:none}.upload-icon{width:72px;height:72px;margin:0 auto 16px;border-radius:24px;display:grid;place-items:center;color:var(--teal2);border:1px solid rgba(141,255,245,.30);background:rgba(25,245,222,.08);box-shadow:inset 0 0 28px rgba(25,245,222,.08),0 0 28px rgba(25,245,222,.10);font-size:1.9rem}.dropzone strong{display:block;font-size:1.08rem}.dropzone small{display:block;margin-top:8px;color:var(--muted2);line-height:1.45}
+    .preview-card{margin-top:14px;display:none;border:1px solid rgba(141,255,245,.18);border-radius:20px;background:rgba(0,0,0,.22);overflow:hidden}.preview-card.active{display:block}.preview-wrap{min-height:190px;display:grid;place-items:center;background:linear-gradient(45deg,rgba(141,255,245,.06) 25%,transparent 25%,transparent 75%,rgba(141,255,245,.06) 75%),linear-gradient(45deg,rgba(141,255,245,.06) 25%,transparent 25%,transparent 75%,rgba(141,255,245,.06) 75%);background-position:0 0,14px 14px;background-size:28px 28px;padding:14px}.preview-wrap img{max-width:100%;max-height:360px;object-fit:contain;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.35)}.file-info{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(141,255,245,.10);border-top:1px solid rgba(141,255,245,.18)}.info-chip{padding:12px;background:rgba(2,17,20,.82);min-width:0}.info-chip small{display:block;color:var(--muted2);text-transform:uppercase;letter-spacing:.09em;font-size:.66rem;margin-bottom:4px}.info-chip strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.86rem}
+    .form-grid{display:grid;gap:14px}.field{display:grid;gap:8px}.field label{color:var(--muted);font-size:.79rem;text-transform:uppercase;letter-spacing:.10em;font-weight:790}.field input,.field select,.field textarea{width:100%;border:1px solid rgba(141,255,245,.18);border-radius:16px;background:rgba(0,0,0,.30);color:var(--text);min-height:48px;padding:12px 13px;outline:none;transition:border-color .18s ease,box-shadow .18s ease}.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(141,255,245,.62);box-shadow:0 0 0 4px rgba(25,245,222,.08)}.field textarea{min-height:290px;resize:vertical;font-family:var(--mono);font-size:.78rem;line-height:1.5;white-space:pre;overflow-wrap:normal;overflow-x:auto}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}.switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid rgba(141,255,245,.16);border-radius:18px;padding:12px 13px;background:rgba(0,0,0,.20);color:var(--muted);line-height:1.45;font-size:.88rem}.toggle{position:relative;display:inline-flex;flex:0 0 auto;width:52px;height:30px}.toggle input{opacity:0;width:0;height:0}.toggle i{position:absolute;inset:0;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(141,255,245,.22);transition:.18s}.toggle i:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;border-radius:50%;background:rgba(239,255,254,.82);transition:.18s}.toggle input:checked+i{background:rgba(25,245,222,.27);box-shadow:0 0 22px rgba(25,245,222,.16)}.toggle input:checked+i:before{transform:translateX(22px);background:var(--teal2);box-shadow:0 0 14px rgba(141,255,245,.55)}
+    .actions{display:flex;flex-wrap:wrap;gap:10px}.actions button{flex:1 1 auto}.status{margin-top:14px;border:1px solid rgba(141,255,245,.16);border-radius:18px;background:rgba(0,0,0,.25);padding:12px 13px;color:var(--muted);display:flex;align-items:center;gap:10px;line-height:1.45;font-size:.9rem}.status .light{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 14px var(--teal);flex:0 0 auto}.status.ok{color:var(--ok)}.status.warn{color:var(--warn)}.status.error{color:var(--danger)}.status.error .light{background:var(--danger);box-shadow:0 0 14px var(--danger)}.status.warn .light{background:var(--warn);box-shadow:0 0 14px var(--warn)}.progress{height:8px;border-radius:999px;background:rgba(141,255,245,.10);overflow:hidden;margin-top:10px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--teal2));box-shadow:0 0 18px rgba(25,245,222,.65);transition:width .18s ease}.tips{display:grid;gap:10px;margin-top:14px}.tip{border:1px solid rgba(141,255,245,.14);border-radius:18px;padding:12px 13px;background:rgba(0,0,0,.18);color:var(--muted);line-height:1.48;font-size:.88rem}.tip strong{color:var(--text)}.size-note{font-family:var(--mono);font-size:.75rem;color:var(--muted2);line-height:1.5;white-space:normal}.hidden{display:none!important}
+    @media(max-width:880px){.main-grid{grid-template-columns:1fr}.app-shell{min-height:auto}.topbar{align-items:flex-start}.brand p{white-space:normal}}@media(max-width:560px){.view{padding-left:12px;padding-right:12px}.hero{border-radius:28px;min-height:calc(100vh - 34px)}.hero:before{width:330px;height:330px}.topbar{border-radius:20px}.topbar .ghost-btn{min-height:38px;padding:0 12px;font-size:.86rem}.panel-body,.panel-header{padding-left:14px;padding-right:14px}.two-col{grid-template-columns:1fr}.file-info{grid-template-columns:1fr}.actions>button{flex:1 1 150px}}
   </style>
 </head>
 <body>
   <section id="homeView" class="view active" aria-label="GIFcode home screen">
     <div class="hero">
       <div class="hero-content">
-        <div class="eyebrow"><span class="dot"></span> clean gif-to-json converter</div>
+        <div class="eyebrow"><span class="dot"></span> mobile-safe gif-to-json converter</div>
         <h1>GIFcode</h1>
-        <p class="subtitle">Turn an animated GIF into clean JSON for GitHub, browser apps, mobile prototypes, and sprite-style animation workflows.</p>
+        <p class="subtitle">Turn a GIF into clean app-ready JSON for GitHub projects, browser prototypes, and mobile image workflows without needing a server.</p>
         <div class="credit">by Mario Garcia</div>
         <button class="launch" id="launchBtn" type="button">code the gif</button>
       </div>
@@ -695,7 +94,7 @@
         <article class="panel">
           <div class="panel-header">
             <h3 class="panel-title"><span></span> Input GIF</h3>
-            <p class="panel-subtitle">Upload a GIF, name the asset, then export it as app-ready JSON. Everything runs in your browser.</p>
+            <p class="panel-subtitle">Upload a GIF, name the asset, then export it as a JSON file your app can rebuild into the original animation.</p>
           </div>
           <div class="panel-body">
             <label class="dropzone" id="dropzone">
@@ -703,14 +102,12 @@
               <div>
                 <div class="upload-icon">⌁</div>
                 <strong>Drop a GIF here or tap to upload</strong>
-                <small>Best for animated GIFs under 25 MB. Exact JSON preserves the original GIF animation.</small>
+                <small>Optimized to avoid mobile crashes. Large GIFs download as JSON without forcing the whole file into the preview box.</small>
               </div>
             </label>
 
             <div class="preview-card" id="previewCard">
-              <div class="preview-wrap">
-                <img id="gifPreview" alt="GIF preview" />
-              </div>
+              <div class="preview-wrap"><img id="gifPreview" alt="GIF preview" /></div>
               <div class="file-info">
                 <div class="info-chip"><small>File</small><strong id="fileName">—</strong></div>
                 <div class="info-chip"><small>Size</small><strong id="fileSize">—</strong></div>
@@ -723,8 +120,8 @@
             <div class="progress"><div class="bar" id="bar"></div></div>
 
             <div class="tips">
-              <div class="tip"><strong>Exact GIF JSON</strong> stores the whole GIF as Base64 so your app can rebuild the original animation.</div>
-              <div class="tip"><strong>Frame-atlas JSON</strong> turns the GIF into a PNG sprite sheet with frame timing, useful for custom canvas/game animation.</div>
+              <div class="tip"><strong>Crash fix:</strong> this version does not duplicate the full Base64 string inside the JSON, and it only previews full JSON when the output is small enough.</div>
+              <div class="tip"><strong>App usage:</strong> rebuild the GIF with <code>asset.gif.dataUrlPrefix + asset.gif.base64</code>.</div>
             </div>
           </div>
         </article>
@@ -732,7 +129,7 @@
         <article class="panel">
           <div class="panel-header">
             <h3 class="panel-title"><span></span> JSON Output</h3>
-            <p class="panel-subtitle">Choose your output style, then download the JSON file or copy it into your GitHub project.</p>
+            <p class="panel-subtitle">Download the completed JSON file or copy it when the output is small enough for the clipboard.</p>
           </div>
           <div class="panel-body">
             <div class="form-grid">
@@ -741,57 +138,26 @@
                 <input id="assetName" type="text" value="gif_asset" autocomplete="off" />
               </div>
 
-              <div class="field">
-                <label for="modeSelect">Export mode</label>
-                <select id="modeSelect">
-                  <option value="exact">Exact GIF Base64 JSON · smallest workflow</option>
-                  <option value="atlas">Frame-atlas JSON · sprite sheet + timing</option>
-                  <option value="both">Both exact GIF + frame atlas</option>
-                </select>
-              </div>
-
-              <div id="atlasOptions" class="form-grid hidden">
-                <div class="two-col">
-                  <div class="field">
-                    <label for="scaleSelect">Atlas scale</label>
-                    <select id="scaleSelect">
-                      <option value="1">100% · full size</option>
-                      <option value="0.75">75% · lighter</option>
-                      <option value="0.5" selected>50% · balanced</option>
-                      <option value="0.25">25% · compact</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label for="sampleSelect">Frame sampling</label>
-                    <select id="sampleSelect">
-                      <option value="1" selected>Every frame</option>
-                      <option value="2">Every 2nd frame</option>
-                      <option value="3">Every 3rd frame</option>
-                      <option value="4">Every 4th frame</option>
-                    </select>
-                  </div>
+              <div class="two-col">
+                <div class="field">
+                  <label for="schemaSelect">JSON style</label>
+                  <select id="schemaSelect">
+                    <option value="app" selected>App-ready JSON</option>
+                    <option value="minimal">Minimal JSON</option>
+                  </select>
                 </div>
-
-                <div class="two-col">
-                  <div class="field">
-                    <label for="maxFrames">Max atlas frames</label>
-                    <input id="maxFrames" type="number" min="1" max="600" value="180" />
-                  </div>
-                  <div class="field">
-                    <label for="columnsInput">Atlas columns</label>
-                    <input id="columnsInput" type="number" min="1" max="80" value="0" />
-                  </div>
-                </div>
-
-                <div class="switch-row">
-                  <span>Include each frame as a separate PNG Base64 array too. This can make the JSON very large.</span>
-                  <label class="toggle"><input id="includeFramesToggle" type="checkbox" /><i></i></label>
+                <div class="field">
+                  <label for="prettySelect">Formatting</label>
+                  <select id="prettySelect">
+                    <option value="pretty" selected>Readable</option>
+                    <option value="compact">Compact</option>
+                  </select>
                 </div>
               </div>
 
               <div class="switch-row">
-                <span>Pretty print JSON for readability.</span>
-                <label class="toggle"><input id="prettyToggle" type="checkbox" checked /><i></i></label>
+                <span>Include a duplicate full Data URL field. Leave this off for mobile stability.</span>
+                <label class="toggle"><input id="dataUrlToggle" type="checkbox" /><i></i></label>
               </div>
 
               <div class="actions">
@@ -802,8 +168,9 @@
               </div>
 
               <div class="field">
-                <label for="jsonOutput">Generated JSON</label>
-                <textarea id="jsonOutput" spellcheck="false" placeholder="Your GIF JSON will appear here..."></textarea>
+                <label for="jsonOutput">Generated JSON Preview</label>
+                <textarea id="jsonOutput" spellcheck="false" placeholder="Your JSON preview or download summary will appear here..."></textarea>
+                <div class="size-note" id="sizeNote">No JSON generated yet.</div>
               </div>
             </div>
           </div>
@@ -813,60 +180,58 @@
   </section>
 
   <script>
-    const homeView = document.getElementById('homeView');
-    const appView = document.getElementById('appView');
-    const launchBtn = document.getElementById('launchBtn');
-    const homeBtn = document.getElementById('homeBtn');
-    const dropzone = document.getElementById('dropzone');
-    const gifInput = document.getElementById('gifInput');
-    const previewCard = document.getElementById('previewCard');
-    const gifPreview = document.getElementById('gifPreview');
-    const fileName = document.getElementById('fileName');
-    const fileSize = document.getElementById('fileSize');
-    const gifDims = document.getElementById('gifDims');
-    const frameCount = document.getElementById('frameCount');
-    const assetName = document.getElementById('assetName');
-    const modeSelect = document.getElementById('modeSelect');
-    const atlasOptions = document.getElementById('atlasOptions');
-    const scaleSelect = document.getElementById('scaleSelect');
-    const sampleSelect = document.getElementById('sampleSelect');
-    const maxFrames = document.getElementById('maxFrames');
-    const columnsInput = document.getElementById('columnsInput');
-    const includeFramesToggle = document.getElementById('includeFramesToggle');
-    const prettyToggle = document.getElementById('prettyToggle');
-    const convertBtn = document.getElementById('convertBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const jsonOutput = document.getElementById('jsonOutput');
-    const statusBox = document.getElementById('status');
-    const progressBar = document.getElementById('bar');
+    const $ = id => document.getElementById(id);
+    const homeView = $('homeView');
+    const appView = $('appView');
+    const launchBtn = $('launchBtn');
+    const homeBtn = $('homeBtn');
+    const dropzone = $('dropzone');
+    const gifInput = $('gifInput');
+    const previewCard = $('previewCard');
+    const gifPreview = $('gifPreview');
+    const fileName = $('fileName');
+    const fileSize = $('fileSize');
+    const gifDims = $('gifDims');
+    const frameCount = $('frameCount');
+    const assetName = $('assetName');
+    const schemaSelect = $('schemaSelect');
+    const prettySelect = $('prettySelect');
+    const dataUrlToggle = $('dataUrlToggle');
+    const convertBtn = $('convertBtn');
+    const copyBtn = $('copyBtn');
+    const downloadBtn = $('downloadBtn');
+    const clearBtn = $('clearBtn');
+    const jsonOutput = $('jsonOutput');
+    const sizeNote = $('sizeNote');
+    const statusBox = $('status');
+    const progressBar = $('bar');
+
+    const FULL_PREVIEW_LIMIT = 1.25 * 1024 * 1024;
+    const COPY_LIMIT = 6 * 1024 * 1024;
+    const WARN_FILE_SIZE = 18 * 1024 * 1024;
 
     let currentFile = null;
     let currentBuffer = null;
     let currentBase64 = '';
-    let currentDataUrl = '';
     let currentHash = '';
     let currentMeta = null;
-    let generatedJson = '';
     let objectUrl = '';
+    let generatedBlob = null;
+    let generatedFileName = 'gif_asset.json';
+    let generatedText = '';
+    let generatedSize = 0;
 
-    const encoder = new TextEncoder();
-
-    function showApp() {
+    launchBtn.addEventListener('click', () => {
       homeView.classList.remove('active');
       appView.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    });
 
-    function showHome() {
+    homeBtn.addEventListener('click', () => {
       appView.classList.remove('active');
       homeView.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    launchBtn.addEventListener('click', showApp);
-    homeBtn.addEventListener('click', showHome);
+    });
 
     function setStatus(message, type = '') {
       statusBox.className = 'status' + (type ? ' ' + type : '');
@@ -878,9 +243,9 @@
     }
 
     function formatBytes(bytes) {
-      if (!bytes) return '0 B';
+      if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
       const units = ['B', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
       return (bytes / Math.pow(1024, i)).toFixed(i ? 2 : 0) + ' ' + units[i];
     }
 
@@ -888,8 +253,12 @@
       return String(name || 'gif_asset')
         .trim()
         .replace(/\.[^/.]+$/, '')
-        .replace(/[^a-zA-Z0-9_\-]+/g, '_')
+        .replace(/[^a-zA-Z0-9_-]+/g, '_')
         .replace(/^_+|_+$/g, '') || 'gif_asset';
+    }
+
+    function escapeJsonString(value) {
+      return JSON.stringify(String(value ?? '')).slice(1, -1);
     }
 
     function arrayBufferToBase64(buffer) {
@@ -903,52 +272,120 @@
     }
 
     async function sha256Hex(buffer) {
-      if (!crypto.subtle) return '';
-      const digest = await crypto.subtle.digest('SHA-256', buffer);
+      if (!window.crypto || !crypto.subtle) return '';
+      const digest = await crypto.subtle.digest('SHA-256', buffer.slice(0));
       return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     function loadImageDimensions(src) {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
-        img.onerror = reject;
+        img.onload = () => resolve({ width: img.naturalWidth || 0, height: img.naturalHeight || 0 });
+        img.onerror = () => reject(new Error('Could not preview this GIF.'));
         img.src = src;
       });
     }
 
-    function getGifTools() {
-      const parseGIF = window.parseGIF || (window.gifuct && window.gifuct.parseGIF);
-      const decompressFrames = window.decompressFrames || (window.gifuct && window.gifuct.decompressFrames);
-      return { parseGIF, decompressFrames };
+    function readU16(bytes, offset) {
+      return bytes[offset] | (bytes[offset + 1] << 8);
     }
 
-    function getBasicGifFrameMeta(buffer) {
-      try {
-        const { parseGIF, decompressFrames } = getGifTools();
-        if (!parseGIF || !decompressFrames) return null;
-        const gif = parseGIF(buffer.slice(0));
-        const frames = decompressFrames(gif, false) || [];
-        const delays = frames.map(frame => Math.max(20, Number(frame.delay) || 100));
-        const durationMs = delays.reduce((sum, delay) => sum + delay, 0);
-        return {
-          frameCount: frames.length,
-          durationMs,
-          fpsEstimate: durationMs ? Number((frames.length / (durationMs / 1000)).toFixed(2)) : null,
-          delaysMs: delays
-        };
-      } catch (error) {
-        console.warn(error);
-        return null;
+    function skipSubBlocks(bytes, pos) {
+      while (pos < bytes.length) {
+        const size = bytes[pos++];
+        if (size === 0) break;
+        pos += size;
       }
+      return pos;
     }
 
-    function makeExactPayload() {
+    function parseGifMeta(buffer) {
+      const bytes = new Uint8Array(buffer);
+      if (bytes.length < 13) throw new Error('This file is too small to be a valid GIF.');
+      const signature = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5]);
+      if (signature !== 'GIF87a' && signature !== 'GIF89a') throw new Error('Please upload a valid GIF file.');
+
+      const width = readU16(bytes, 6);
+      const height = readU16(bytes, 8);
+      const packed = bytes[10];
+      let pos = 13;
+      if (packed & 0x80) pos += 3 * Math.pow(2, (packed & 0x07) + 1);
+
+      let frames = 0;
+      const delaysMs = [];
+      let pendingDelay = 100;
+      let loopCount = null;
+
+      while (pos < bytes.length) {
+        const block = bytes[pos++];
+        if (block === 0x3B) break;
+
+        if (block === 0x21) {
+          const label = bytes[pos++];
+          if (label === 0xF9) {
+            const blockSize = bytes[pos++];
+            if (blockSize >= 4 && pos + blockSize <= bytes.length) {
+              pos += 1;
+              const rawDelay = readU16(bytes, pos);
+              pendingDelay = rawDelay > 0 ? Math.max(20, rawDelay * 10) : 100;
+              pos += 2;
+              pos += 1;
+              if (bytes[pos] === 0) pos += 1;
+            } else {
+              pos += Math.max(0, blockSize);
+              pos = skipSubBlocks(bytes, pos);
+            }
+          } else if (label === 0xFF) {
+            const appBlockSize = bytes[pos++];
+            const appName = Array.from(bytes.slice(pos, pos + appBlockSize)).map(c => String.fromCharCode(c)).join('');
+            pos += appBlockSize;
+            const subStart = pos;
+            if (appName.startsWith('NETSCAPE')) {
+              const subSize = bytes[pos++];
+              if (subSize >= 3 && bytes[pos] === 1) loopCount = readU16(bytes, pos + 1);
+              pos = subStart;
+            }
+            pos = skipSubBlocks(bytes, pos);
+          } else {
+            pos = skipSubBlocks(bytes, pos);
+          }
+        } else if (block === 0x2C) {
+          frames += 1;
+          delaysMs.push(pendingDelay);
+          if (pos + 9 > bytes.length) break;
+          pos += 8;
+          const imagePacked = bytes[pos++];
+          if (imagePacked & 0x80) pos += 3 * Math.pow(2, (imagePacked & 0x07) + 1);
+          pos += 1;
+          pos = skipSubBlocks(bytes, pos);
+          pendingDelay = 100;
+        } else {
+          break;
+        }
+      }
+
+      const durationMs = delaysMs.reduce((sum, delay) => sum + delay, 0);
       return {
-        type: 'gif-exact-base64',
-        name: safeName(assetName.value),
+        version: signature,
+        width,
+        height,
+        frameCount: frames || null,
+        durationMs: durationMs || null,
+        fpsEstimate: durationMs && frames ? Number((frames / (durationMs / 1000)).toFixed(2)) : null,
+        loopCount,
+        delaysMs
+      };
+    }
+
+    function basicPayloadObject() {
+      const name = safeName(assetName.value);
+      const mimeType = currentFile.type || 'image/gif';
+      const base = {
+        type: schemaSelect.value === 'minimal' ? 'gifcode-minimal-v1' : 'gifcode-app-gif-v1',
+        name,
+        createdWith: 'GIFcode by Mario Garcia',
         originalFileName: currentFile.name,
-        mimeType: currentFile.type || 'image/gif',
+        mimeType,
         byteSize: currentFile.size,
         width: currentMeta.width,
         height: currentMeta.height,
@@ -956,231 +393,151 @@
         durationMs: currentMeta.durationMs,
         fpsEstimate: currentMeta.fpsEstimate,
         sha256: currentHash,
-        exactGifBase64: currentBase64,
-        dataUrl: currentDataUrl,
-        usage: {
-          html: 'img.src = asset.dataUrl;',
-          javascript: 'const gifBlob = await fetch(asset.dataUrl).then(r => r.blob());'
-        },
-        createdWith: 'GIFcode by Mario Garcia'
+        gif: {
+          dataUrlPrefix: 'data:' + mimeType + ';base64,'
+        }
       };
+
+      if (schemaSelect.value === 'app') {
+        base.animation = {
+          loopCount: currentMeta.loopCount,
+          delaysMs: currentMeta.delaysMs
+        };
+        base.usage = {
+          htmlImage: 'img.src = asset.gif.dataUrlPrefix + asset.gif.base64;',
+          reactNativeImage: 'source={{ uri: asset.gif.dataUrlPrefix + asset.gif.base64 }}',
+          browserBlob: 'const blob = await fetch(asset.gif.dataUrlPrefix + asset.gif.base64).then(response => response.blob());'
+        };
+      }
+
+      return base;
     }
 
-    function patchToImageData(patch, width, height) {
-      return new ImageData(new Uint8ClampedArray(patch), width, height);
+    function buildJsonParts() {
+      const pretty = prettySelect.value === 'pretty';
+      const duplicateDataUrl = dataUrlToggle.checked;
+      const payload = basicPayloadObject();
+      const indent = pretty ? 2 : 0;
+      const placeholder = '__GIFCODE_BASE64_GOES_HERE__';
+      const dataUrlPlaceholder = '__GIFCODE_DATA_URL_GOES_HERE__';
+      payload.gif.base64 = placeholder;
+      if (duplicateDataUrl) payload.gif.dataUrl = dataUrlPlaceholder;
+
+      let json = JSON.stringify(payload, null, indent);
+      const quotedPlaceholder = '"' + placeholder + '"';
+      const quotedDataUrlPlaceholder = '"' + dataUrlPlaceholder + '"';
+      const base64Quoted = '"' + currentBase64 + '"';
+      const dataUrlQuoted = '"' + payload.gif.dataUrlPrefix + currentBase64 + '"';
+      const baseIndex = json.indexOf(quotedPlaceholder);
+      if (baseIndex === -1) throw new Error('Could not build JSON output.');
+
+      const first = json.slice(0, baseIndex) + '"';
+      let after = json.slice(baseIndex + quotedPlaceholder.length - 1);
+      const parts = [first, currentBase64];
+
+      if (duplicateDataUrl) {
+        const dataIndex = after.indexOf(quotedDataUrlPlaceholder);
+        if (dataIndex !== -1) {
+          parts.push(after.slice(0, dataIndex) + '"');
+          parts.push(payload.gif.dataUrlPrefix + currentBase64);
+          parts.push(after.slice(dataIndex + quotedDataUrlPlaceholder.length - 1));
+        } else {
+          parts.push(after);
+        }
+      } else {
+        parts.push(after);
+      }
+
+      const approximateSize = parts.reduce((sum, part) => sum + part.length, 0);
+      return { parts, approximateSize, fullText: approximateSize <= COPY_LIMIT ? parts.join('') : '' };
     }
 
-    async function makeAtlasPayload() {
-      const { parseGIF, decompressFrames } = getGifTools();
-      if (!parseGIF || !decompressFrames) {
-        throw new Error('Frame-atlas mode needs the GIF decoder library to load. Use Exact GIF JSON, or check your internet connection and reload.');
-      }
-
-      setStatus('Decoding GIF frames for the atlas...', '');
-      setProgress(14);
-      await framePause();
-
-      const gif = parseGIF(currentBuffer.slice(0));
-      const frames = decompressFrames(gif, true) || [];
-      if (!frames.length) throw new Error('No frames were found in this GIF.');
-
-      const originalWidth = gif.lsd.width || currentMeta.width;
-      const originalHeight = gif.lsd.height || currentMeta.height;
-      const scale = Math.max(0.05, Number(scaleSelect.value) || 0.5);
-      const sampleEvery = Math.max(1, Number(sampleSelect.value) || 1);
-      const limit = Math.max(1, Math.min(600, Number(maxFrames.value) || 180));
-      const scaledWidth = Math.max(1, Math.round(originalWidth * scale));
-      const scaledHeight = Math.max(1, Math.round(originalHeight * scale));
-
-      const selected = [];
-      for (let i = 0; i < frames.length && selected.length < limit; i += sampleEvery) {
-        selected.push({ frame: frames[i], originalIndex: i });
-      }
-
-      const userCols = Number(columnsInput.value) || 0;
-      const columns = userCols > 0 ? Math.max(1, Math.min(80, userCols)) : Math.ceil(Math.sqrt(selected.length));
-      const rows = Math.ceil(selected.length / columns);
-      const atlasWidth = scaledWidth * columns;
-      const atlasHeight = scaledHeight * rows;
-      const maxCanvasArea = 16384 * 16384;
-      if (atlasWidth * atlasHeight > maxCanvasArea) {
-        throw new Error('This atlas is too large for the browser canvas. Lower the scale, sample fewer frames, or reduce max frames.');
-      }
-
-      const sourceCanvas = document.createElement('canvas');
-      sourceCanvas.width = originalWidth;
-      sourceCanvas.height = originalHeight;
-      const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
-      sourceCtx.clearRect(0, 0, originalWidth, originalHeight);
-
-      const atlasCanvas = document.createElement('canvas');
-      atlasCanvas.width = atlasWidth;
-      atlasCanvas.height = atlasHeight;
-      const atlasCtx = atlasCanvas.getContext('2d');
-      atlasCtx.imageSmoothingEnabled = true;
-      atlasCtx.clearRect(0, 0, atlasWidth, atlasHeight);
-
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = originalWidth;
-      tempCanvas.height = originalHeight;
-      const tempCtx = tempCanvas.getContext('2d');
-
-      const framesJson = [];
-      const frameImages = [];
-      let previousFrame = null;
-      let restoreState = null;
-
-      for (let index = 0; index < selected.length; index++) {
-        const item = selected[index];
-        const frame = item.frame;
-        const dims = frame.dims || { left: 0, top: 0, width: originalWidth, height: originalHeight };
-
-        if (previousFrame && previousFrame.disposalType === 2) {
-          const pd = previousFrame.dims || { left: 0, top: 0, width: originalWidth, height: originalHeight };
-          sourceCtx.clearRect(pd.left, pd.top, pd.width, pd.height);
-        } else if (previousFrame && previousFrame.disposalType === 3 && restoreState) {
-          sourceCtx.putImageData(restoreState, 0, 0);
-        }
-
-        restoreState = frame.disposalType === 3 ? sourceCtx.getImageData(0, 0, originalWidth, originalHeight) : null;
-
-        if (frame.patch) {
-          const imageData = patchToImageData(frame.patch, dims.width, dims.height);
-          sourceCtx.putImageData(imageData, dims.left, dims.top);
-        }
-
-        const col = index % columns;
-        const row = Math.floor(index / columns);
-        const x = col * scaledWidth;
-        const y = row * scaledHeight;
-        atlasCtx.drawImage(sourceCanvas, 0, 0, originalWidth, originalHeight, x, y, scaledWidth, scaledHeight);
-
-        let framePngBase64 = undefined;
-        if (includeFramesToggle.checked) {
-          tempCtx.clearRect(0, 0, originalWidth, originalHeight);
-          tempCtx.drawImage(sourceCanvas, 0, 0);
-          framePngBase64 = tempCanvas.toDataURL('image/png').split(',')[1];
-          frameImages.push(framePngBase64);
-        }
-
-        framesJson.push({
-          index,
-          sourceFrameIndex: item.originalIndex,
-          x,
-          y,
-          width: scaledWidth,
-          height: scaledHeight,
-          delayMs: Math.max(20, Number(frame.delay) || 100),
-          disposalType: Number(frame.disposalType) || 0
-        });
-
-        previousFrame = frame;
-        setProgress(14 + Math.round((index + 1) / selected.length * 66));
-        if (index % 8 === 0) await framePause();
-      }
-
-      setStatus('Building the final JSON atlas...', '');
-      setProgress(88);
-      await framePause();
-
-      const atlasDataUrl = atlasCanvas.toDataURL('image/png');
-      const atlasBase64 = atlasDataUrl.split(',')[1];
-      const durationMs = framesJson.reduce((sum, frame) => sum + frame.delayMs, 0);
-
-      return {
-        type: 'gif-frame-atlas',
-        name: safeName(assetName.value),
-        originalFileName: currentFile.name,
-        sourceSha256: currentHash,
-        sourceMimeType: currentFile.type || 'image/gif',
-        sourceByteSize: currentFile.size,
-        originalWidth,
-        originalHeight,
-        atlasWidth,
-        atlasHeight,
-        frameWidth: scaledWidth,
-        frameHeight: scaledHeight,
-        scale,
-        sampleEvery,
-        sourceFrameCount: frames.length,
-        exportedFrameCount: framesJson.length,
-        durationMs,
-        fpsEstimate: durationMs ? Number((framesJson.length / (durationMs / 1000)).toFixed(2)) : null,
-        columns,
-        rows,
-        spriteSheetMimeType: 'image/png',
-        spriteSheetPngBase64: atlasBase64,
-        spriteSheetDataUrl: atlasDataUrl,
-        frames: framesJson,
-        framePngBase64: includeFramesToggle.checked ? frameImages : undefined,
-        usage: {
-          canvas: 'Draw spriteSheet image at frame.x/frame.y/frame.width/frame.height using each frame.delayMs.',
-          html: 'const img = new Image(); img.src = asset.spriteSheetDataUrl;'
-        },
-        createdWith: 'GIFcode by Mario Garcia'
-      };
+    function clearOutputOnly() {
+      generatedBlob = null;
+      generatedText = '';
+      generatedSize = 0;
+      jsonOutput.value = '';
+      sizeNote.textContent = 'No JSON generated yet.';
+      copyBtn.disabled = true;
+      downloadBtn.disabled = true;
     }
 
-    function framePause() {
-      return new Promise(resolve => requestAnimationFrame(() => resolve()));
+    function setGeneratedPreview(text, size) {
+      generatedSize = size;
+      sizeNote.textContent = 'Generated JSON size: about ' + formatBytes(size) + '.';
+      if (text && size <= FULL_PREVIEW_LIMIT) {
+        jsonOutput.value = text;
+      } else {
+        const copyText = size <= COPY_LIMIT ? 'Copy is available.' : 'Copy is disabled to protect mobile memory. Use Download JSON.';
+        jsonOutput.value = [
+          '{',
+          '  "status": "JSON generated successfully",',
+          '  "name": "' + safeName(assetName.value) + '",',
+          '  "outputSize": "' + formatBytes(size) + '",',
+          '  "preview": "Full preview hidden to prevent mobile crashing.",',
+          '  "nextStep": "Tap Download JSON to save the complete file.",',
+          '  "copyNote": "' + copyText + '"',
+          '}'
+        ].join('\n');
+      }
     }
 
     async function handleFile(file) {
       if (!file) return;
-      if (!file.type.includes('gif') && !file.name.toLowerCase().endsWith('.gif')) {
+      if ((!file.type || !file.type.includes('gif')) && !file.name.toLowerCase().endsWith('.gif')) {
         setStatus('Please choose a .gif file.', 'error');
         return;
       }
 
       clearOutputOnly();
       currentFile = file;
+      currentBuffer = null;
+      currentBase64 = '';
+      currentHash = '';
+      currentMeta = null;
+      convertBtn.disabled = true;
       setProgress(3);
       setStatus('Reading GIF file...', '');
-      convertBtn.disabled = true;
-      copyBtn.disabled = true;
-      downloadBtn.disabled = true;
 
       try {
         currentBuffer = await file.arrayBuffer();
-        currentBase64 = arrayBufferToBase64(currentBuffer);
-        currentDataUrl = 'data:' + (file.type || 'image/gif') + ';base64,' + currentBase64;
-        currentHash = await sha256Hex(currentBuffer);
+        const parsed = parseGifMeta(currentBuffer);
         setProgress(22);
 
         if (objectUrl) URL.revokeObjectURL(objectUrl);
         objectUrl = URL.createObjectURL(file);
         gifPreview.src = objectUrl;
-        const dims = await loadImageDimensions(objectUrl);
-        setProgress(38);
+        let dims = { width: parsed.width, height: parsed.height };
+        try { dims = await loadImageDimensions(objectUrl); } catch (_) {}
+        setProgress(40);
 
-        const frameMeta = getBasicGifFrameMeta(currentBuffer) || {};
         currentMeta = {
-          width: dims.width,
-          height: dims.height,
-          frameCount: frameMeta.frameCount || null,
-          durationMs: frameMeta.durationMs || null,
-          fpsEstimate: frameMeta.fpsEstimate || null,
-          delaysMs: frameMeta.delaysMs || []
+          ...parsed,
+          width: dims.width || parsed.width,
+          height: dims.height || parsed.height
         };
+
+        currentHash = await sha256Hex(currentBuffer);
+        setProgress(55);
 
         assetName.value = safeName(file.name);
         fileName.textContent = file.name;
         fileSize.textContent = formatBytes(file.size);
-        gifDims.textContent = dims.width + ' × ' + dims.height;
-        frameCount.textContent = currentMeta.frameCount ? currentMeta.frameCount + ' frames' : 'Exact only';
+        gifDims.textContent = currentMeta.width + ' × ' + currentMeta.height;
+        frameCount.textContent = currentMeta.frameCount ? currentMeta.frameCount + ' frames' : 'Unknown';
         previewCard.classList.add('active');
-
-        setProgress(100);
         convertBtn.disabled = false;
-        if (currentMeta.frameCount) {
-          setStatus('GIF loaded. Choose an export mode and convert.', 'ok');
+        setProgress(100);
+
+        if (file.size > WARN_FILE_SIZE) {
+          setStatus('GIF loaded. This is a large file, so the app will hide the full JSON preview and prioritize download.', 'warn');
         } else {
-          setStatus('GIF loaded. Exact JSON is ready; frame count needs the decoder library.', 'warn');
+          setStatus('GIF loaded. Press Convert to JSON.', 'ok');
         }
       } catch (error) {
         console.error(error);
-        setStatus(error.message || 'Could not read this GIF.', 'error');
         setProgress(0);
+        setStatus(error.message || 'Could not read this GIF.', 'error');
       }
     }
 
@@ -1193,64 +550,63 @@
       convertBtn.disabled = true;
       copyBtn.disabled = true;
       downloadBtn.disabled = true;
-      setProgress(0);
-      setStatus('Converting GIF to JSON...', '');
+      generatedBlob = null;
+      generatedText = '';
       jsonOutput.value = '';
+      setProgress(8);
+      setStatus('Encoding GIF into JSON...', '');
 
       try {
-        const mode = modeSelect.value;
-        let payload;
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        currentBase64 = arrayBufferToBase64(currentBuffer);
+        setProgress(58);
+        await new Promise(resolve => requestAnimationFrame(resolve));
 
-        if (mode === 'exact') {
-          setProgress(34);
-          payload = makeExactPayload();
-        } else if (mode === 'atlas') {
-          payload = await makeAtlasPayload();
-        } else {
-          const exact = makeExactPayload();
-          const atlas = await makeAtlasPayload();
-          payload = {
-            type: 'gifcode-combined',
-            name: safeName(assetName.value),
-            exactGif: exact,
-            frameAtlas: atlas,
-            createdWith: 'GIFcode by Mario Garcia'
-          };
-        }
-
-        generatedJson = JSON.stringify(payload, null, prettyToggle.checked ? 2 : 0);
-        jsonOutput.value = generatedJson;
+        const built = buildJsonParts();
+        generatedBlob = new Blob(built.parts, { type: 'application/json;charset=utf-8' });
+        generatedFileName = safeName(assetName.value) + '.json';
+        generatedText = built.fullText;
+        setGeneratedPreview(generatedText, built.approximateSize);
         setProgress(100);
-        copyBtn.disabled = false;
         downloadBtn.disabled = false;
-        setStatus('JSON generated. Copy it or download the file.', 'ok');
+        copyBtn.disabled = !generatedText;
+
+        if (generatedText) {
+          setStatus('JSON generated. You can copy or download it.', 'ok');
+        } else {
+          setStatus('JSON generated. Download is ready; copy is disabled for this large file to prevent crashing.', 'ok');
+        }
       } catch (error) {
         console.error(error);
         setStatus(error.message || 'Could not convert this GIF.', 'error');
+        setProgress(0);
       } finally {
         convertBtn.disabled = false;
       }
     }
 
     async function copyJson() {
-      if (!generatedJson) return;
+      if (!generatedText) {
+        setStatus('This JSON is too large to copy safely. Use Download JSON.', 'warn');
+        return;
+      }
       try {
-        await navigator.clipboard.writeText(generatedJson);
+        await navigator.clipboard.writeText(generatedText);
         setStatus('JSON copied to clipboard.', 'ok');
       } catch (error) {
+        jsonOutput.value = generatedText;
         jsonOutput.select();
         document.execCommand('copy');
-        setStatus('JSON selected and copied using fallback.', 'ok');
+        setStatus('JSON copied using fallback.', 'ok');
       }
     }
 
     function downloadJson() {
-      if (!generatedJson) return;
-      const blob = new Blob([generatedJson], { type: 'application/json;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
+      if (!generatedBlob) return;
+      const url = URL.createObjectURL(generatedBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = safeName(assetName.value) + '.json';
+      a.download = generatedFileName;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -1258,21 +614,15 @@
       setStatus('JSON download started.', 'ok');
     }
 
-    function clearOutputOnly() {
-      generatedJson = '';
-      jsonOutput.value = '';
-      copyBtn.disabled = true;
-      downloadBtn.disabled = true;
-    }
-
     function clearAll() {
       currentFile = null;
       currentBuffer = null;
       currentBase64 = '';
-      currentDataUrl = '';
       currentHash = '';
       currentMeta = null;
-      generatedJson = '';
+      generatedBlob = null;
+      generatedText = '';
+      generatedSize = 0;
       gifInput.value = '';
       gifPreview.removeAttribute('src');
       if (objectUrl) URL.revokeObjectURL(objectUrl);
@@ -1283,6 +633,7 @@
       frameCount.textContent = '—';
       previewCard.classList.remove('active');
       jsonOutput.value = '';
+      sizeNote.textContent = 'No JSON generated yet.';
       convertBtn.disabled = true;
       copyBtn.disabled = true;
       downloadBtn.disabled = true;
@@ -1290,37 +641,25 @@
       setStatus('Ready. Upload a GIF to begin.');
     }
 
-    function updateModeUI() {
-      const needsAtlas = modeSelect.value === 'atlas' || modeSelect.value === 'both';
-      atlasOptions.classList.toggle('hidden', !needsAtlas);
-    }
-
     dropzone.addEventListener('dragover', event => {
       event.preventDefault();
       dropzone.classList.add('dragging');
     });
-
     dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragging'));
-
     dropzone.addEventListener('drop', event => {
       event.preventDefault();
       dropzone.classList.remove('dragging');
       handleFile(event.dataTransfer.files && event.dataTransfer.files[0]);
     });
-
     gifInput.addEventListener('change', event => handleFile(event.target.files && event.target.files[0]));
     convertBtn.addEventListener('click', convert);
     copyBtn.addEventListener('click', copyJson);
     downloadBtn.addEventListener('click', downloadJson);
     clearBtn.addEventListener('click', clearAll);
-    modeSelect.addEventListener('change', updateModeUI);
-
-    [assetName, modeSelect, scaleSelect, sampleSelect, maxFrames, columnsInput, includeFramesToggle, prettyToggle].forEach(control => {
+    [assetName, schemaSelect, prettySelect, dataUrlToggle].forEach(control => {
       control.addEventListener('input', clearOutputOnly);
       control.addEventListener('change', clearOutputOnly);
     });
-
-    updateModeUI();
   </script>
 </body>
 </html>
